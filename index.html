@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sign in · AI Trading Command Center</title>
+<link rel="stylesheet" href="/css/style.css">
+</head>
+<body class="auth-body">
+
+  <div class="auth-shell">
+    <div class="auth-brand">
+      <div class="brand-mark">
+        <span class="brand-dot"></span>
+        <span class="brand-name">QUANTIS</span>
+      </div>
+      <h1>Private AI Trading<br>Command Center</h1>
+      <p class="brand-sub">Invite-only access. Accounts are provisioned by your administrator.</p>
+
+      <ul class="brand-points">
+        <li><span class="pt green"></span> Live MT5 account &amp; position sync</li>
+        <li><span class="pt blue"></span> Rule-based AI market signals</li>
+        <li><span class="pt orange"></span> Built-in risk &amp; exposure controls</li>
+      </ul>
+    </div>
+
+    <div class="auth-panel">
+      <form id="login-form" class="card auth-card" autocomplete="off">
+        <h2>Sign in</h2>
+        <p class="muted">Enter the credentials your admin issued.</p>
+
+        <label for="username">Username</label>
+        <input id="username" name="username" type="text" placeholder="e.g. j.trader" required>
+
+        <label for="password">Password</label>
+        <input id="password" name="password" type="password" placeholder="••••••••" required>
+
+        <div id="login-error" class="form-error" hidden></div>
+
+        <button type="submit" class="btn btn-primary btn-block" id="login-btn">Sign in</button>
+
+        <p class="fine-print">No self-registration is available on this platform. Contact your admin for access.</p>
+      </form>
+    </div>
+  </div>
+
+  <script src="/js/api.js"></script>
+  <script src="/js/app.js"></script>
+</body>
+</html>
