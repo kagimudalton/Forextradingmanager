@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Settings · AI Trading Command Center</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="app-shell">
+
+  <aside class="sidebar">
+    <div class="brand-mark">
+      <span class="brand-dot"></span>
+      <span class="brand-name">QUANTIS</span>
+    </div>
+
+    <ul class="nav-group">
+      <li class="nav-label">Workspace</li>
+      <li><a class="nav-link" data-page="dashboard" href="dashboard.html"><span class="ic">◧</span> Dashboard</a></li>
+      <li><a class="nav-link" data-page="scanner" href="dashboard.html#scanner"><span class="ic">◎</span> Market Scanner</a></li>
+      <li><a class="nav-link" data-page="signals" href="dashboard.html#signals"><span class="ic">✦</span> AI Signals</a></li>
+      <li><a class="nav-link" data-page="portfolio" href="dashboard.html#portfolio"><span class="ic">▤</span> Portfolio</a></li>
+      <li><a class="nav-link" data-page="risk" href="dashboard.html#risk"><span class="ic">⛊</span> Risk Manager</a></li>
+      <li><a class="nav-link" data-page="reports" href="dashboard.html#reports"><span class="ic">▦</span> Reports</a></li>
+
+      <li class="nav-label">Account</li>
+      <li><a class="nav-link" data-page="profile" href="profile.html"><span class="ic">⚙</span> Settings</a></li>
+      <li data-role="ADMIN"><a class="nav-link" data-page="admin" href="admin.html"><span class="ic">🛡</span> Admin Panel</a></li>
+    </ul>
+
+    <div class="sidebar-footer">
+      <div class="side-user">
+        <div class="avatar" id="side-avatar">--</div>
+        <div class="side-user-meta">
+          <div class="side-user-name" id="side-username">—</div>
+          <div class="side-user-role" id="side-role">—</div>
+        </div>
+      </div>
+      <div class="logout-link" id="logout-link">Sign out</div>
+    </div>
+  </aside>
+
+  <main class="main">
+    <div class="topbar">
+      <div>
+        <h1>Profile &amp; Risk Settings</h1>
+        <p class="muted">Personal preferences that shape how the AI and risk manager behave for you.</p>
+      </div>
+    </div>
+
+    <div class="grid-2">
+      <section class="card">
+        <h2 style="margin-top:0">Risk Preferences</h2>
+        <form id="settings-form">
+          <div class="form-row">
+            <label for="risk_percent">Risk per trade (%)</label>
+            <input type="number" id="risk_percent" name="risk_percent" min="0.1" max="100" step="0.1" required>
+          </div>
+          <div class="form-row">
+            <label for="max_trades">Maximum open trades</label>
+            <input type="number" id="max_trades" name="max_trades" min="1" max="100" step="1" required>
+          </div>
+          <div class="form-row">
+            <label for="max_daily_loss_percent">Maximum daily loss (%)</label>
+            <input type="number" id="max_daily_loss_percent" name="max_daily_loss_percent" min="0.1" max="100" step="0.1" required>
+          </div>
+          <button type="submit" class="btn btn-primary" id="save-settings-btn">Save settings</button>
+        </form>
+      </section>
+
+      <section class="card">
+        <h2 style="margin-top:0">Account</h2>
+        <div class="opp-row"><span class="muted">Username</span><strong id="profile-username">—</strong></div>
+        <div class="opp-row"><span class="muted">Role</span><span class="tag" id="profile-role">—</span></div>
+        <div class="opp-row"><span class="muted">Session</span><strong>Active</strong></div>
+        <p class="muted" style="margin-top:16px">
+          Accounts, roles, and access are managed exclusively by your administrator.
+          Contact them to change your username or role.
+        </p>
+      </section>
+    </div>
+  </main>
+</div>
+
+<script src="config.js"></script>
+  <script src="api.js"></script>
+<script src="shared.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", async () => {
+  const user = await initShell("profile");
+  if (!user) return;
+
+  document.getElementById("profile-username").textContent = user.username;
+  const roleTag = document.getElementById("profile-role");
+  roleTag.textContent = user.role;
+  roleTag.classList.add(user.role);
+
+  try {
+    const settings = await api.getSettings();
+    document.getElementById("risk_percent").value = settings.risk_percent;
+    document.getElementById("max_trades").value = settings.max_trades;
+    document.getElementById("max_daily_loss_percent").value = settings.max_daily_loss_percent;
+  } catch (err) {
+    showToast(err.message, "error");
+  }
+
+  document.getElementById("settings-form").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const btn = document.getElementById("save-settings-btn");
+    btn.disabled = true;
+    btn.textContent = "Saving…";
+    try {
+      await api.updateSettings({
+        risk_percent: parseFloat(document.getElementById("risk_percent").value),
+        max_trades: parseInt(document.getElementById("max_trades").value, 10),
+        max_daily_loss_percent: parseFloat(document.getElementById("max_daily_loss_percent").value),
+      });
+      showToast("Settings saved", "success");
+    } catch (err) {
+      showToast(err.message, "error");
+    } finally {
+      btn.disabled = false;
+      btn.textContent = "Save settings";
+    }
+  });
+});
+</script>
+</body>
+</html>
