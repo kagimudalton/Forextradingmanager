@@ -15,6 +15,7 @@ async function initShell(activePage) {
   if (nameEl) nameEl.textContent = user.username;
   if (roleEl) roleEl.textContent = user.role;
   if (avatarEl) avatarEl.textContent = user.username.slice(0, 2).toUpperCase();
+  window.__username = user.username;
 
   document.querySelectorAll(".nav-link[data-page]").forEach((el) => {
     el.classList.toggle("active", el.dataset.page === activePage);
