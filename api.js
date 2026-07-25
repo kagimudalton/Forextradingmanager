@@ -49,6 +49,10 @@ const api = {
 
   analyze: () => apiRequest("/analyze", { method: "POST" }),
   signals: (limit = 20) => apiRequest(`/signals?limit=${limit}`),
+  scanner: () => apiRequest("/scanner"),
+
+  reportsSummary: () => apiRequest("/reports/summary"),
+  reportsTrades: (limit = 50) => apiRequest(`/reports/trades?limit=${limit}`),
 
   tradeBuy: (payload) => apiRequest("/trade/buy", { method: "POST", body: payload }),
   tradeSell: (payload) => apiRequest("/trade/sell", { method: "POST", body: payload }),
@@ -69,8 +73,18 @@ const api = {
 };
 
 function connectWebSocket(onMessage) {
-  const proto = location.protocol === "https:" ? "wss" : "ws";
-  const ws = new WebSocket(`${proto}://${location.host}/ws`);
+  // Point the socket at the backend (Render), not the page's own origin
+  // (GitHub Pages) — those are different hosts in the split deployment.
+  let wsHost, wsProto;
+  if (typeof BACKEND_URL !== "undefined" && BACKEND_URL) {
+    const u = new URL(BACKEND_URL);
+    wsHost = u.host;
+    wsProto = u.protocol === "https:" ? "wss" : "ws";
+  } else {
+    wsHost = location.host;
+    wsProto = location.protocol === "https:" ? "wss" : "ws";
+  }
+  const ws = new WebSocket(`${wsProto}://${wsHost}/ws`);
   ws.onmessage = (evt) => {
     try {
       const msg = JSON.parse(evt.data);
