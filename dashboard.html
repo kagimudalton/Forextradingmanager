@@ -19,12 +19,12 @@
 
     <ul class="nav-group">
       <li class="nav-label">Workspace</li>
-      <li><a class="nav-link" data-page="dashboard" href="dashboard.html"><span class="ic">◧</span> Dashboard</a></li>
-      <li><a class="nav-link" data-page="scanner" href="dashboard.html#scanner"><span class="ic">◎</span> Market Scanner</a></li>
-      <li><a class="nav-link" data-page="signals" href="dashboard.html#signals"><span class="ic">✦</span> AI Signals</a></li>
-      <li><a class="nav-link" data-page="portfolio" href="dashboard.html#portfolio"><span class="ic">▤</span> Portfolio</a></li>
-      <li><a class="nav-link" data-page="risk" href="dashboard.html#risk"><span class="ic">⛊</span> Risk Manager</a></li>
-      <li><a class="nav-link" data-page="reports" href="dashboard.html#reports"><span class="ic">▦</span> Reports</a></li>
+      <li><a class="nav-link" data-view="overview" href="#overview"><span class="ic">◧</span> Dashboard</a></li>
+      <li><a class="nav-link" data-view="scanner" href="#scanner"><span class="ic">◎</span> Market Scanner</a></li>
+      <li><a class="nav-link" data-view="signals" href="#signals"><span class="ic">✦</span> AI Signals</a></li>
+      <li><a class="nav-link" data-view="portfolio" href="#portfolio"><span class="ic">▤</span> Portfolio</a></li>
+      <li><a class="nav-link" data-view="risk" href="#risk"><span class="ic">⛊</span> Risk Manager</a></li>
+      <li><a class="nav-link" data-view="reports" href="#reports"><span class="ic">▦</span> Reports</a></li>
 
       <li class="nav-label">Account</li>
       <li><a class="nav-link" data-page="profile" href="profile.html"><span class="ic">⚙</span> Settings</a></li>
@@ -48,8 +48,8 @@
 
     <div class="topbar">
       <div>
-        <h1 id="welcome-heading">Welcome</h1>
-        <p class="muted">Live account snapshot &amp; AI market intelligence</p>
+        <h1 id="view-heading">Welcome</h1>
+        <p class="muted" id="view-subheading">Live account snapshot &amp; AI market intelligence</p>
       </div>
       <div class="status-pill" id="mt5-pill">
         <span class="status-dot off" id="mt5-dot"></span>
@@ -57,78 +57,196 @@
       </div>
     </div>
 
-    <!-- Stat cards -->
-    <section class="stat-grid">
-      <div class="card stat-card">
-        <span class="stat-label">Account Balance</span>
-        <span class="stat-value" id="stat-balance">—</span>
-        <span class="stat-sub muted" id="stat-currency">—</span>
-      </div>
-      <div class="card stat-card">
-        <span class="stat-label">Equity</span>
-        <span class="stat-value" id="stat-equity">—</span>
-        <span class="stat-sub muted">Margin level <span id="stat-margin-level">—</span></span>
-      </div>
-      <div class="card stat-card">
-        <span class="stat-label">Daily Profit</span>
-        <span class="stat-value" id="stat-daily-profit">—</span>
-        <span class="stat-sub" id="stat-daily-profit-sub">—</span>
-      </div>
-      <div class="card stat-card">
-        <span class="stat-label">Open Trades</span>
-        <span class="stat-value" id="stat-open-trades">—</span>
-        <span class="stat-sub muted">Max <span id="stat-max-trades">—</span> per settings</span>
-      </div>
-    </section>
+    <!-- ======================= VIEW: OVERVIEW ======================= -->
+    <div class="view" id="view-overview">
 
-    <!-- AI Control Center -->
-    <div class="section-title"><h2>AI Control Center</h2></div>
-    <section class="card">
-      <div class="control-center">
-        <button class="btn btn-primary" id="btn-analyze">🔍 Analyze Markets</button>
-        <button class="btn btn-success" id="btn-generate">✦ Generate Signals</button>
-        <button class="btn btn-warning" id="btn-start-bot">▶ Start Auto Mode</button>
-        <button class="btn btn-danger" id="btn-stop-bot">■ Stop Bot</button>
-      </div>
-      <p class="muted" style="margin-top:14px;margin-bottom:0" id="bot-status-line">Bot status: —</p>
-    </section>
+      <section class="stat-grid">
+        <div class="card stat-card">
+          <span class="stat-label">Account Balance</span>
+          <span class="stat-value" id="stat-balance">—</span>
+          <span class="stat-sub muted" id="stat-currency">—</span>
+        </div>
+        <div class="card stat-card">
+          <span class="stat-label">Equity</span>
+          <span class="stat-value" id="stat-equity">—</span>
+          <span class="stat-sub muted">Margin level <span id="stat-margin-level">—</span></span>
+        </div>
+        <div class="card stat-card">
+          <span class="stat-label">Daily Profit</span>
+          <span class="stat-value" id="stat-daily-profit">—</span>
+          <span class="stat-sub" id="stat-daily-profit-sub">—</span>
+        </div>
+        <div class="card stat-card">
+          <span class="stat-label">Open Trades</span>
+          <span class="stat-value" id="stat-open-trades">—</span>
+          <span class="stat-sub muted">Max <span id="stat-max-trades">—</span> per settings</span>
+        </div>
+      </section>
 
-    <div class="grid-2">
-      <!-- Market Opportunities -->
-      <div>
-        <div class="section-title"><h2>Market Opportunities</h2></div>
-        <section class="card" id="opportunities-card">
-          <div class="empty-state">Run <strong>Analyze Markets</strong> to generate AI signals.</div>
-        </section>
+      <div class="section-title"><h2>AI Control Center</h2></div>
+      <section class="card">
+        <div class="control-center">
+          <button class="btn btn-primary" id="btn-analyze">🔍 Analyze Markets</button>
+          <button class="btn btn-success" id="btn-generate">✦ Generate Signals</button>
+          <button class="btn btn-warning" id="btn-start-bot">▶ Start Auto Mode</button>
+          <button class="btn btn-danger" id="btn-stop-bot">■ Stop Bot</button>
+        </div>
+        <p class="muted" style="margin-top:14px;margin-bottom:0" id="bot-status-line">Bot status: —</p>
+      </section>
+
+      <div class="grid-2">
+        <div>
+          <div class="section-title"><h2>Market Opportunities</h2></div>
+          <section class="card" id="opportunities-card">
+            <div class="empty-state">Run <strong>Analyze Markets</strong> to generate AI signals.</div>
+          </section>
+        </div>
+        <div>
+          <div class="section-title"><h2>Risk Status</h2></div>
+          <section class="card" id="risk-card">
+            <div class="empty-state">Loading risk status…</div>
+          </section>
+        </div>
       </div>
 
-      <!-- Risk Status -->
-      <div>
-        <div class="section-title"><h2>Risk Status</h2></div>
-        <section class="card" id="risk-card">
+      <div class="section-title"><h2>Open Positions</h2></div>
+      <section class="card">
+        <table>
+          <thead><tr><th>Symbol</th><th>Type</th><th>Volume</th><th>Open</th><th>Current</th><th>Profit</th><th></th></tr></thead>
+          <tbody id="positions-body"><tr><td colspan="7" class="empty-state">Loading positions…</td></tr></tbody>
+        </table>
+      </section>
+    </div>
+
+    <!-- ======================= VIEW: SCANNER ======================= -->
+    <div class="view" id="view-scanner" hidden>
+      <div class="section-title">
+        <h2>Live Market Scanner</h2>
+        <button class="btn btn-primary" id="btn-rescan">🔄 Rescan</button>
+      </div>
+      <p class="muted" style="margin-top:-8px">Broader universe than AI Signals — browse confidence &amp; momentum across 14 instruments.</p>
+      <section class="card">
+        <table>
+          <thead><tr><th>Symbol</th><th>Price</th><th>24h Change</th><th>Direction</th><th>Confidence</th><th>Risk</th></tr></thead>
+          <tbody id="scanner-body"><tr><td colspan="6" class="empty-state">Loading scanner…</td></tr></tbody>
+        </table>
+      </section>
+    </div>
+
+    <!-- ======================= VIEW: SIGNALS ======================= -->
+    <div class="view" id="view-signals" hidden>
+      <div class="section-title">
+        <h2>AI Signal History</h2>
+        <button class="btn btn-success" id="btn-signals-generate">✦ Generate New Signals</button>
+      </div>
+      <section class="card">
+        <table>
+          <thead><tr><th>Time</th><th>Symbol</th><th>Direction</th><th>Confidence</th><th>Risk</th><th>Reasoning</th></tr></thead>
+          <tbody id="signals-body"><tr><td colspan="6" class="empty-state">Loading signal history…</td></tr></tbody>
+        </table>
+      </section>
+    </div>
+
+    <!-- ======================= VIEW: PORTFOLIO ======================= -->
+    <div class="view" id="view-portfolio" hidden>
+      <div class="section-title"><h2>Portfolio</h2></div>
+      <section class="stat-grid" style="margin-bottom:24px">
+        <div class="card stat-card">
+          <span class="stat-label">Balance</span>
+          <span class="stat-value" id="pf-balance">—</span>
+        </div>
+        <div class="card stat-card">
+          <span class="stat-label">Equity</span>
+          <span class="stat-value" id="pf-equity">—</span>
+        </div>
+        <div class="card stat-card">
+          <span class="stat-label">Free Margin</span>
+          <span class="stat-value" id="pf-margin">—</span>
+        </div>
+        <div class="card stat-card">
+          <span class="stat-label">Leverage</span>
+          <span class="stat-value" id="pf-leverage">—</span>
+        </div>
+      </section>
+
+      <div class="section-title"><h2>Open Positions</h2></div>
+      <section class="card">
+        <table>
+          <thead><tr><th>Symbol</th><th>Type</th><th>Volume</th><th>Open</th><th>Current</th><th>Profit</th><th></th></tr></thead>
+          <tbody id="pf-positions-body"><tr><td colspan="7" class="empty-state">Loading…</td></tr></tbody>
+        </table>
+      </section>
+
+      <div class="section-title"><h2>Trade History</h2></div>
+      <section class="card">
+        <table>
+          <thead><tr><th>Symbol</th><th>Type</th><th>Volume</th><th>Profit</th><th>Closed</th></tr></thead>
+          <tbody id="pf-history-body"><tr><td colspan="5" class="empty-state">Loading…</td></tr></tbody>
+        </table>
+      </section>
+    </div>
+
+    <!-- ======================= VIEW: RISK MANAGER ======================= -->
+    <div class="view" id="view-risk" hidden>
+      <div class="section-title"><h2>Risk Manager</h2></div>
+      <div class="grid-2">
+        <section class="card" id="risk-detail-card">
           <div class="empty-state">Loading risk status…</div>
+        </section>
+        <section class="card">
+          <h2 style="margin-top:0">Adjust Risk Preferences</h2>
+          <p class="muted">Changes here apply immediately to the auto-trading bot and manual trade sizing.</p>
+          <a href="profile.html" class="btn btn-primary btn-block" style="margin-top:12px">Open Risk Settings →</a>
         </section>
       </div>
     </div>
 
-    <!-- Open Positions -->
-    <div class="section-title"><h2>Open Positions</h2></div>
-    <section class="card">
-      <table>
-        <thead>
-          <tr><th>Symbol</th><th>Type</th><th>Volume</th><th>Open</th><th>Current</th><th>Profit</th><th></th></tr>
-        </thead>
-        <tbody id="positions-body">
-          <tr><td colspan="7" class="empty-state">Loading positions…</td></tr>
-        </tbody>
-      </table>
-    </section>
+    <!-- ======================= VIEW: REPORTS ======================= -->
+    <div class="view" id="view-reports" hidden>
+      <div class="section-title"><h2>Performance Reports</h2></div>
+      <section class="stat-grid" style="margin-bottom:24px">
+        <div class="card stat-card">
+          <span class="stat-label">Total P&amp;L</span>
+          <span class="stat-value" id="rp-pnl">—</span>
+        </div>
+        <div class="card stat-card">
+          <span class="stat-label">Win Rate</span>
+          <span class="stat-value" id="rp-winrate">—</span>
+        </div>
+        <div class="card stat-card">
+          <span class="stat-label">Best Trade</span>
+          <span class="stat-value up" id="rp-best">—</span>
+        </div>
+        <div class="card stat-card">
+          <span class="stat-label">Worst Trade</span>
+          <span class="stat-value down" id="rp-worst">—</span>
+        </div>
+      </section>
+
+      <div class="grid-2">
+        <div>
+          <div class="section-title"><h2>By Symbol</h2></div>
+          <section class="card" id="rp-by-symbol">
+            <div class="empty-state">Loading…</div>
+          </section>
+        </div>
+        <div>
+          <div class="section-title"><h2>Trade Log</h2></div>
+          <section class="card">
+            <table>
+              <thead><tr><th>Symbol</th><th>Type</th><th>Profit</th><th>Status</th></tr></thead>
+              <tbody id="rp-trades-body"><tr><td colspan="4" class="empty-state">Loading…</td></tr></tbody>
+            </table>
+          </section>
+        </div>
+      </div>
+    </div>
 
   </main>
 </div>
 
 <script src="config.js"></script>
-  <script src="api.js"></script>
+<script src="api.js"></script>
 <script src="shared.js"></script>
 <script src="dashboard.js"></script>
 </body>
