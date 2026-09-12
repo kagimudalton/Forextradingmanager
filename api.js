@@ -1,0 +1,115 @@
+/* api.js — thin fetch wrapper around the FastAPI backend. Cookies (session)
+   are sent automatically via credentials:"include". */
+
+const API_BASE = `${typeof BACKEND_URL !== "undefined" ? BACKEND_URL : ""}/api`;
+
+async function apiRequest(path, { method = "GET", body = null } = {}) {
+  const opts = { method, credentials: "include", headers: {} };
+  if (body !== null) {
+    opts.headers["Content-Type"] = "application/json";
+    opts.body = JSON.stringify(body);
+  }
+
+  const res = await fetch(`${API_BASE}${path}`, opts);
+
+  if (res.status === 401) {
+    const onLoginPage = location.pathname.endsWith("login.html");
+    if (!onLoginPage) {
+      window.location.href = "login.html";
+    }
+    throw new Error("Not authenticated");
+  }
+
+  let data = null;
+  try { data = await res.json(); } catch (_) { /* no body */ }
+
+  if (!res.ok) {
+    const message = (data && data.detail) || `Request failed (${res.status})`;
+    throw new Error(message);
+  }
+  return data;
+}
+
+const api = {
+  login: (username, password) => apiRequest("/login", { method: "POST", body: { username, password } }),
+  logout: () => apiRequest("/logout", { method: "POST" }),
+  me: () => apiRequest("/me"),
+
+  account: () => apiRequest("/account"),
+  positions: () => apiRequest("/positions"),
+  history: (days = 30) => apiRequest(`/history?days=${days}`),
+  riskStatus: () => apiRequest("/risk-status"),
+  getSettings: () => apiRequest("/settings"),
+  updateSettings: (payload) => apiRequest("/settings", { method: "POST", body: payload }),
+
+  analyze: () => apiRequest("/analyze", { method: "POST" }),
+  signals: (limit = 20) => apiRequest(`/signals?limit=${limit}`),
+  scanner: () => apiRequest("/scanner"),
+
+  reportsSummary: () => apiRequest("/reports/summary"),
+  reportsTrades: (limit = 50) => apiRequest(`/reports/trades?limit=${limit}`),
+
+  riskCalculator: (payload) => apiRequest("/tools/risk-calculator", { method: "POST", body: payload }),
+  marketAnalyst: (symbol) => apiRequest(`/tools/analyst/${symbol}`),
+  explainTrade: (tradeId) => apiRequest(`/tools/explain-trade/${tradeId}`),
+  chartRates: (symbol, timeframe = "M15", count = 100) => apiRequest(`/tools/rates?symbol=${symbol}&timeframe=${timeframe}&count=${count}`),
+
+  journalUpdate: (tradeId, payload) => apiRequest(`/journal/${tradeId}`, { method: "PATCH", body: payload }),
+  journalStats: () => apiRequest("/journal/stats"),
+
+  calendarUpcoming: (days = 7) => apiRequest(`/calendar/upcoming?days=${days}`),
+
+  backtest: (payload) => apiRequest("/backtest", { method: "POST", body: payload }),
+
+  tradeBuy: (payload) => apiRequest("/trade/buy", { method: "POST", body: payload }),
+  tradeSell: (payload) => apiRequest("/trade/sell", { method: "POST", body: payload }),
+  tradeClose: (ticket) => apiRequest("/trade/close", { method: "POST", body: { ticket } }),
+
+  botStart: () => apiRequest("/bot/start", { method: "POST" }),
+  botStop: () => apiRequest("/bot/stop", { method: "POST" }),
+  botStatus: () => apiRequest("/bot/status"),
+
+  listUsers: () => apiRequest("/users"),
+  createUser: (payload) => apiRequest("/users/create", { method: "POST", body: payload }),
+  deleteUser: (id) => apiRequest(`/users/${id}`, { method: "DELETE" }),
+  disableUser: (id) => apiRequest(`/users/${id}/disable`, { method: "POST" }),
+  enableUser: (id) => apiRequest(`/users/${id}/enable`, { method: "POST" }),
+  logs: (limit = 100) => apiRequest(`/logs?limit=${limit}`),
+  mt5Status: () => apiRequest("/mt5-status"),
+};
+
+function connectWebSocket(onMessage) {
+  let wsHost, wsProto;
+  if (typeof BACKEND_URL !== "undefined" && BACKEND_URL) {
+    const u = new URL(BACKEND_URL);
+    wsHost = u.host;
+    wsProto = u.protocol === "https:" ? "wss" : "ws";
+  } else {
+    wsHost = location.host;
+    wsProto = location.protocol === "https:" ? "wss" : "ws";
+  }
+  const ws = new WebSocket(`${wsProto}://${wsHost}/ws`);
+  ws.onmessage = (evt) => {
+    try { onMessage(JSON.parse(evt.data)); } catch (_) { /* ignore malformed frame */ }
+  };
+  ws.onclose = () => { setTimeout(() => connectWebSocket(onMessage), 4000); };
+  return ws;
+}
+
+function showToast(message, type = "info") {
+  const el = document.createElement("div");
+  el.className = `toast ${type}`;
+  el.textContent = message;
+  document.body.appendChild(el);
+  setTimeout(() => el.remove(), 3800);
+}
+
+function fmtMoney(n) {
+  if (n === null || n === undefined) return "—";
+  return n.toLocaleString(undefined, { style: "currency", currency: "USD" });
+}
+
+function fmtPct(n, digits = 1) {
+  if (n === null || n === undefined) return "—";
+  return `${n.toFixed(digits)}%`;
+}
